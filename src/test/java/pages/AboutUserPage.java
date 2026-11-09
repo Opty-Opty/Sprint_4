@@ -14,8 +14,9 @@ public class AboutUserPage {
     private final By lastNameInput = By.xpath(".//input[@placeholder='* Фамилия']");
     private final By addressInput = By.xpath(".//input[@placeholder='* Адрес: куда привезти заказ']");
     private final By metroStationInput = By.xpath(".//input[@placeholder='* Станция метро']");
-    // Используем более точный и стабильный локатор для строки станции в списке
-    private final By metroDropdownOption = By.className("select-search__option");
+
+    private final By metroDropdownOption = By.className("select-search__row");
+
     private final By phoneInput = By.xpath(".//input[@placeholder='* Телефон: на него позвонит курьер']");
     private final By nextButton = By.xpath(".//button[text()='Далее']");
 
@@ -24,21 +25,20 @@ public class AboutUserPage {
     }
 
     public void fillCustomerForm(String firstName, String lastName, String address, String metro, String phone) {
-        driver.findElement(firstNameInput).sendKeys(firstName);
-        driver.findElement(lastNameInput).sendKeys(lastName);
-        driver.findElement(addressInput).sendKeys(address);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-        WebElement metroField = driver.findElement(metroStationInput);
+        wait.until(ExpectedConditions.elementToBeClickable(firstNameInput)).sendKeys(firstName);
+        wait.until(ExpectedConditions.elementToBeClickable(lastNameInput)).sendKeys(lastName);
+        wait.until(ExpectedConditions.elementToBeClickable(addressInput)).sendKeys(address);
+
+        WebElement metroField = wait.until(ExpectedConditions.elementToBeClickable(metroStationInput));
         metroField.click();
-
         metroField.sendKeys(metro);
 
-        new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.visibilityOfElementLocated(metroDropdownOption));
+        WebElement option = wait.until(ExpectedConditions.visibilityOfElementLocated(metroDropdownOption));
+        option.click();
 
-        driver.findElement(metroDropdownOption).click();
-
-        driver.findElement(phoneInput).sendKeys(phone);
-        driver.findElement(nextButton).click();
+        wait.until(ExpectedConditions.elementToBeClickable(phoneInput)).sendKeys(phone);
+        wait.until(ExpectedConditions.elementToBeClickable(nextButton)).click();
     }
 }

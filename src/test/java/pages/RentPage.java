@@ -18,7 +18,6 @@ public class RentPage {
     private final By orderButton = By.xpath(".//div[contains(@class, 'Order_Content')]//button[text()='Заказать']");
     private final By confirmYesButton = By.xpath(".//div[contains(@class, 'Order_Modal')]//button[text()='Да']");
 
-
     private final By modalHeader = By.xpath("//div[contains(@class, 'ModalHeader')]");
 
     public RentPage(WebDriver driver) {
@@ -28,30 +27,37 @@ public class RentPage {
     public void fillRentForm(String date, String rentPeriod, String color, String comment) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
+        // 1. Заполнение поля даты
         WebElement dateField = wait.until(ExpectedConditions.elementToBeClickable(dateInput));
         dateField.click();
         dateField.sendKeys(Keys.chord(Keys.CONTROL, "a"), Keys.DELETE);
         dateField.sendKeys(date);
         dateField.sendKeys(Keys.ENTER);
 
+        // 2. Открытие выпадающего списка периода
         wait.until(ExpectedConditions.elementToBeClickable(rentPeriodDropdown)).click();
 
+        // 3. Выбор опции срока аренды самоката
         By rentOption = By.xpath(".//div[@class='Dropdown-option' and text()='" + rentPeriod + "']");
         WebElement option = wait.until(ExpectedConditions.visibilityOfElementLocated(rentOption));
         option.click();
 
+        // 4. Клик по чекбоксу цвета самоката
         if (color != null && !color.isEmpty()) {
             By colorCheckbox = By.xpath(".//label[contains(text(), '" + color + "')]/input");
             WebElement checkbox = driver.findElement(colorCheckbox);
             ((JavascriptExecutor) driver).executeScript("arguments[0].click();", checkbox);
         }
 
+        // 5. Заполнение комментария курьеру
         wait.until(ExpectedConditions.elementToBeClickable(commentInput)).sendKeys(comment);
 
+        // 6. Скролл и клик «Заказать»
         WebElement orderBtn = wait.until(ExpectedConditions.presenceOfElementLocated(orderButton));
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", orderBtn);
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", orderBtn);
 
+        // 7. Нажатие кнопки подтверждения «Да» для преодоления задержек в Chrome и Firefox
         WebElement yesBtn = wait.until(ExpectedConditions.presenceOfElementLocated(confirmYesButton));
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", yesBtn);
     }

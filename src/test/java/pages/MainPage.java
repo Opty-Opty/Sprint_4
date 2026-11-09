@@ -14,32 +14,25 @@ public class MainPage {
     private final String url = "https://qa-scooter.praktikum-services.ru/";
 
     // Кнопка согласия с куки «Да все привыкли»
-    // Локатор элемента:
     private final By cookieButton = By.id("rcc-confirm-button");
 
     // Логотип «Самокат» в шапке сайта
-    // Локатор элемента:
     private final By scooterLogo = By.className("Header_LogoScooter__3otGl");
 
     // Логотип «Яндекс» в шапке сайта
-    // Локатор элемента:
     private final By yandexLogo = By.className("Header_LogoYandex__3TSOI");
 
-    // Главный заголовок на странице («Учебный тренажер»)
-    // Локатор элемента:
+    // Главный заголовок на странице
     private final By mainHeader = By.className("Home_Header__iE16B");
 
     // Верхняя кнопка «Заказать» в шапке сайта
-    // Локатор элемента:
     private final By topOrderButton = By.xpath(".//div[contains(@class, 'Header')]//button[text()='Заказать']");
 
     // Нижняя кнопка «Заказать» перед разделом FAQ
-    // Локатор элемента:
     private final By bottomOrderButton = By.xpath(".//div[not(contains(@class, 'Header'))]//button[text()='Заказать']");
 
-    // Раздел «Вопросы о важном»
-    // Локатор элемента:
-    private final By faqSection = By.className("Home_FAQ__3u0I4");
+    // Универсальный локатор родительского раздела FAQ по тексту заголовка
+    private final By faqSection = By.xpath("//div[div[text()='Вопросы о важном']]");
 
     // Кнопки-стрелочки вопросов в FAQ
     private final String questionIdPattern = "accordion__heading-";
@@ -68,22 +61,28 @@ public class MainPage {
     }
 
     public void clickBottomOrderButton() {
-
         WebElement element = new WebDriverWait(driver, Duration.ofSeconds(5))
                 .until(ExpectedConditions.presenceOfElementLocated(bottomOrderButton));
 
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", element);
-
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
     }
 
+        public void scrollToFaq() {
+        WebElement element = new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.presenceOfElementLocated(faqSection));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", element);
+    }
+
     public void clickFaqQuestion(int index) {
-        WebElement question = driver.findElement(By.id(questionIdPattern + index));
+        WebElement question = new WebDriverWait(driver, Duration.ofSeconds(5)).until(ExpectedConditions.elementToBeClickable(By.id(questionIdPattern + index)));
+
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", question);
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", question);
     }
 
     public String getFaqAnswerText(int index) {
-        return driver.findElement(By.id(answerIdPattern + index)).getText();
+        return new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.id(answerIdPattern + index))).getText();
     }
 }

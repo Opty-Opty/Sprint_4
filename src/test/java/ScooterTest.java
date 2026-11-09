@@ -1,23 +1,16 @@
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import pages.AboutUserPage;
 import pages.MainPage;
 import pages.RentPage;
-
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
 
 @RunWith(Parameterized.class)
-public class ScooterTest {
-    private WebDriver driver;
+public class ScooterTest extends BaseTest {
 
     private final String browser;
     private final String button;
@@ -49,28 +42,20 @@ public class ScooterTest {
     @Parameterized.Parameters(name = "Тест {index}: Браузер {0} | Кнопка {1} | Цвет {9}")
     public static Collection<Object[]> getOrderData() {
         return Arrays.asList(new Object[][] {
-                // Google Chrome тесты)
-                {"chrome", "top", "Ян", "Ли", "г. Москва, Арбат, 5", "Арбатская", "79991112233", "25.11.2026", "сутки", "чёрный жемчуг", "Быстрее"},
-                {"chrome", "top", "Константин", "Иванов", "г. Москва, Мира, 12", "Авиамоторная", "79017654321", "01.12.2026", "двое суток", "серая безысходность", "У двери"},
-                {"chrome", "bottom", "Ян", "Ли", "г. Москва, Арбат, 5", "Арбатская", "79991112233", "25.11.2026", "сутки", "чёрный жемчуг", "Быстрее"},
-                {"chrome", "bottom", "Константин", "Иванов", "г. Москва, Мира, 12", "Авиамоторная", "79017654321", "01.12.2026", "двое суток", "серая безысходность", "У двери"},
-                // Mozilla Firefox тесты
-                {"firefox", "top", "Ян", "Ли", "г. Москва, Арбат, 5", "Арбатская", "79991112233", "25.11.2026", "сутки", "чёрный жемчуг", "Быстрее"},
-                {"firefox", "top", "Константин", "Иванов", "г. Москва, Мира, 12", "Авиамоторная", "79017654321", "01.12.2026", "двое суток", "серая безысходность", "У двери"},
-                {"firefox", "bottom", "Ян", "Ли", "г. Москва, Арбат, 5", "Арбатская", "79991112233", "25.11.2026", "сутки", "чёрный жемчуг", "Быстрее"},
-                {"firefox", "bottom", "Константин", "Иванов", "г. Москва, Мира, 12", "Авиамоторная", "79017654321", "01.12.2026", "двое суток", "серая безысходность", "У двери"}
+                {"chrome", "top", "Ян", "Ли", "г. Москва, ...", "Арбатская", "79991112233", "25.11.2026", "сутки", "чёрный жемчуг", "Быстрее"},
+                {"chrome", "top", "Константин", "Иванов", "г. Москва, ...", "Авиамоторная", "79017654321", "01.12.2026", "двое суток", "серая безысходность", "У двери"},
+                {"chrome", "bottom", "Ян", "Ли", "г. Москва, ...", "Арбатская", "79991112233", "25.11.2026", "сутки", "чёрный жемчуг", "Быстрее"},
+                {"chrome", "bottom", "Константин", "Иванов", "г. Москва, ...", "Авиамоторная", "79017654321", "01.12.2026", "двое суток", "серая безысходность", "У двери"},
+                {"firefox", "top", "Ян", "Ли", "г. Москва, ...", "Арбатская", "79991112233", "25.11.2026", "сутки", "чёрный жемчуг", "Быстрее"},
+                {"firefox", "top", "Константин", "Иванов", "г. Москва, ...", "Авиамоторная", "79017654321", "01.12.2026", "двое суток", "серая безысходность", "У двери"},
+                {"firefox", "bottom", "Ян", "Ли", "г. Москва, ...", "Арбатская", "79991112233", "25.11.2026", "сутки", "чёрный жемчуг", "Быстрее"},
+                {"firefox", "bottom", "Константин", "Иванов", "г. Москва, ...", "Авиамоторная", "79017654321", "01.12.2026", "двое суток", "серая безысходность", "У двери"}
         });
     }
 
     @Before
     public void setUp() {
-        if ("firefox".equalsIgnoreCase(browser)) {
-            driver = new FirefoxDriver();
-        } else {
-            driver = new ChromeDriver();
-        }
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-        driver.manage().window().maximize();
+        initDriver(browser);
     }
 
     @Test
@@ -91,14 +76,8 @@ public class ScooterTest {
         aboutUserPage.fillCustomerForm(firstName, lastName, address, metro, phone);
         rentPage.fillRentForm(date, period, color, comment);
 
+
         Assert.assertTrue("Окно подтверждения заказа не открылось!",
                 rentPage.getModalHeaderText().contains("заказ"));
-
-    }
-
-        @After
-    public void teardown() {
-        // Закрой браузер
-        driver.quit();
     }
 }
